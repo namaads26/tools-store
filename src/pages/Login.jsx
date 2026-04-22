@@ -3,6 +3,7 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } f
 import { app } from "../services/firebase";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 const auth = getAuth(app);
 
@@ -35,17 +36,24 @@ function Login() {
   };
 
   // 🆕 REGISTRO
-  const handleRegister = async () => {
-    try {
-      setLoading(true);
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Cuenta creada 🚀");
-    } catch (err) {
-      alert("Error: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+  const db = getFirestore(app);
+  
+const handleRegister = async () => {
+  try {
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+
+    // 🔥 guardamos usuario en DB
+    await setDoc(doc(db, "usuarios", userCred.user.uid), {
+      email,
+      role: "cliente" // por defecto
+    });
+
+    alert("Cuenta creada");
+  } catch (err) {
+    alert(err.message);
+  }
+};
 
   return (
     <div style={styles.container}>
