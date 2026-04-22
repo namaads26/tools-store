@@ -1,5 +1,12 @@
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
 function Admin() {
-  return <h1>Admin Panel</h1>;
+  const { user } = useContext(AuthContext);
+
+  if (!user) return <h1>No autorizado</h1>;
+
+  return <h1>Panel Admin</h1>;
 }
 
 export default Admin;
