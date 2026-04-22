@@ -1,60 +1,45 @@
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { CartContext } from "../context/CartContext";
 import { getAuth, signOut } from "firebase/auth";
 import { app } from "../services/firebase";
+import Cart from "./Cart";
 
 const auth = getAuth(app);
 
 function Navbar() {
   const { user } = useContext(AuthContext);
-  const { carrito, total } = useContext(CartContext);
 
-  const handleLogout = async () => {
+  const logout = async () => {
     await signOut(auth);
   };
 
   return (
     <nav style={styles.nav}>
-      
       {/* LOGO */}
-      <h2 style={styles.logo}>Nama Tools</h2>
+      <h2>Nama Tools 🚀</h2>
 
       {/* LINKS */}
       <div style={styles.links}>
-        <Link to="/" style={styles.link}>Home</Link>
-        <Link to="/shop" style={styles.link}>Tienda</Link>
+        <Link to="/">Home</Link>
+        <Link to="/shop">Tienda</Link>
 
-        {!user && (
-          <Link to="/login" style={styles.link}>Login</Link>
-        )}
-
-        {user && (
-          <Link to="/admin" style={styles.link}>Admin</Link>
-        )}
+        {!user && <Link to="/login">Login</Link>}
+        {user && <Link to="/admin">Admin</Link>}
       </div>
 
-      {/* USER + CART */}
+      {/* DERECHA */}
       <div style={styles.right}>
-        
-        {/* USER */}
         {user ? (
-          <div>
-            <span style={styles.user}>{user.email}</span>
-            <button onClick={handleLogout} style={styles.button}>
-              Logout
-            </button>
-          </div>
+          <>
+            <span>{user.email}</span>
+            <button onClick={logout}>Salir</button>
+          </>
         ) : (
-          <span style={styles.user}>Invitado</span>
+          <span>Invitado</span>
         )}
 
-        {/* CART */}
-        <div style={styles.cart}>
-          🛒 {carrito.length} | ${total}
-        </div>
-
+        <Cart />
       </div>
     </nav>
   );
@@ -67,37 +52,17 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "15px 30px",
+    padding: "15px 20px",
     background: "#111",
     color: "#fff"
   },
-  logo: {
-    margin: 0
-  },
   links: {
     display: "flex",
-    gap: "20px"
-  },
-  link: {
-    color: "#fff",
-    textDecoration: "none"
+    gap: "15px"
   },
   right: {
     display: "flex",
     alignItems: "center",
-    gap: "15px"
-  },
-  user: {
-    fontSize: "14px"
-  },
-  button: {
-    marginLeft: "10px",
-    padding: "5px 10px",
-    cursor: "pointer"
-  },
-  cart: {
-    background: "#333",
-    padding: "5px 10px",
-    borderRadius: "5px"
+    gap: "10px"
   }
 };
